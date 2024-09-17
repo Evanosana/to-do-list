@@ -1,15 +1,13 @@
 let textBox = document.getElementById("addNewText")
-let counter = 0
 
 const addNew = document.getElementById("addNew")
+const container = document.getElementById("container")
 
-console.log(counter)
 addNew.addEventListener("click", listItems)
+
 
 function listItems(){
     let textBoxValue = document.getElementById("addNewText").value
-    counter = (counter + 1)
-    console.log(counter)
 
     if(textBoxValue === ""){
         console.log("clear")
@@ -17,14 +15,39 @@ function listItems(){
     }
     else{
         const newElement = document.createElement("div")
+        const childLabel = document.createElement("label")
+        const buttonOne = document.createElement("button")
+        const buttonTwo = document.createElement("button")
 
-        newElement.classList.add("container")
-        newElement.createElement("p", "button", "button")
+        newElement.appendChild(childLabel)
+        newElement.appendChild(buttonOne)
+        newElement.appendChild(buttonTwo)
 
-        const container = document.getElementById("container");
-        container.appendChild(newElement);
+        buttonOne.classList.add("rowButtonFinished", "rowButton")
+        buttonTwo.classList.add("rowButtonDelete", "rowButton")
+        buttonOne.id = "finishButton"
+        buttonTwo.id = "deleteButton"
+        childLabel.classList.add("child")
+        newElement.classList.add("row")
+
+        childLabel.innerText = textBoxValue
+        buttonOne.textContent = "Finished"
+        buttonTwo.textContent = "Delete"
+
+        const container = document.getElementById("container")
+        container.appendChild(newElement)
         
-
-        console.log(container)
+        document.getElementById("addNewText").value = ""
     }
+        
+        finishButton.addEventListener("click", finishTask)
+        deleteButton.addEventListener("click", deleteTask)
+}
+function finishTask(event){
+    const row = event.target.previousElementSibling
+    row.classList.add("finished")
+}
+function deleteTask(event){
+    const row = event.target.parentElement
+    row.remove()
 }
