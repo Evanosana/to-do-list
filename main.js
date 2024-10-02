@@ -1,59 +1,151 @@
-let textBox = document.getElementById("addNewText") // input box
+const addNew = document.getElementById("addNew");
+const container = document.getElementById("container");
 
-const addNew = document.getElementById("addNew") // + button
-const container = document.getElementById("container") // location for tasks to appear
+let textBox = document.getElementById("addNewText");
+let memory
+let finished
 
-addNew.addEventListener("click", listItems) // calls the listItems function when the + is clicked
+if(!localStorage.length){
+    memory = []
+    finished = []
+} else{
+    memory = JSON.parse(localStorage.getItem('memory'));
+    finished = JSON.parse(localStorage.getItem('finished'));
+    console.log(localStorage)
+    runExistingTasks();
+}
 
-
-function listItems(){
-    let textBoxValue = document.getElementById("addNewText").value // sets the textbox to a value
-
-    if(textBoxValue === ""){ // if the entry is clear, leave the function
-        console.log("clear")
-        return
+addNew.addEventListener("click", addNewRow);
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        addNewRow();
     }
-    else{ // Add new rows for tasks
-        const newElement = document.createElement("div") // row container
-        const childLabel = document.createElement("label") // task name
-        const buttonOne = document.createElement("button") // finish button
-        const buttonTwo = document.createElement("button") // delete button
+});
 
-        // adds children to the row
-        newElement.appendChild(childLabel)
-        newElement.appendChild(buttonOne)
-        newElement.appendChild(buttonTwo)
-
-        // gives classes and ids to the children
-        buttonOne.classList.add("rowButtonFinished", "rowButton")
-        buttonTwo.classList.add("rowButtonDelete", "rowButton")
-        buttonOne.id = "finishButton"
-        buttonTwo.id = "deleteButton"
-        childLabel.classList.add("child")
-        newElement.classList.add("row")
-
-        // adds content to the elements being added ^^^
-        childLabel.innerText = textBoxValue
-        buttonOne.textContent = "Finished"
-        buttonTwo.textContent = "Delete"
-
-        // puts the row inside of the premade container
-        const container = document.getElementById("container")
-        container.appendChild(newElement)
-        
-        // once a task is submitted, clear the input field
-        document.getElementById("addNewText").value = ""
+textBox.focus();
+function addNewRow(){
+    let textBoxItem = textBox.value;
+    if(!textBoxItem){
+        return;
     }
-        
-        // calls the function when the respective button is pressed
-        finishButton.addEventListener("click", finishTask)
-        deleteButton.addEventListener("click", deleteTask)
+    memory.push(textBoxItem);
+    finished.push(textBoxItem+'n');
+
+    const newRowDiv = document.createElement("div");
+    const newRowLabel = document.createElement("label");
+    const newRowFinishButton = document.createElement("button");
+    const newRowDeleteButton = document.createElement("button");
+
+    container.appendChild(newRowDiv);
+    newRowDiv.appendChild(newRowLabel);
+    newRowDiv.appendChild(newRowFinishButton);
+    newRowDiv.appendChild(newRowDeleteButton);
+
+    newRowDiv.classList.add("row");
+    newRowLabel.classList.add("child");
+    newRowFinishButton.classList.add("rowButtonFinished", "rowButton");
+    newRowDeleteButton.classList.add("rowButtonDelete", "rowButton");
+
+    newRowLabel.innerText = textBoxItem;
+    newRowFinishButton.textContent = 'Finish';
+    newRowDeleteButton.textContent = 'Delete';
+
+    newRowFinishButton.id = "finishButton";
+    newRowFinishButton.addEventListener("click", finishButton);
+    newRowDeleteButton.addEventListener("click", deleteButton);
+
+    textBox.value = '';
+    textBox.focus();
+
+    localStorage.setItem('memory', JSON.stringify(memory));
+    localStorage.setItem('finished', JSON.stringify(finished));
+    console.log(localStorage);
 }
-function finishTask(event){ // crosses out a task
-    const row = event.target.previousElementSibling
-    row.classList.add("finished")
+function finishButton(event){
+    const finishButton = event.target.previousElementSibling
+    const label = event.target.parentElement.querySelector('.child').innerText;
+    if(finishButton.classList.contains("finished")){
+        console.log(true);
+        finishButton.classList.remove("finished");
+        const finishButtonUnmark = event.target;
+        finishButtonUnmark.innerText = "Finish";
+        for(let i = 0; i < finished.length; i++){
+            if(finished[i].includes(label)){
+                finished[i] = label+'n';
+                localStorage.setItem('finished', JSON.stringify(finished))
+                console.log(localStorage)
+            }
+        }
+        return;
+    }
+    for(let i = 0; i < finished.length; i++){
+        if(finished[i].includes(label)){
+            finished[i] = label+'y';
+            localStorage.setItem('finished', JSON.stringify(finished))
+            console.log(localStorage)
+        }
+    }
+    finishButton.classList.add("finished");
+    const finishButtonUnmark = event.target;
+    finishButtonUnmark.innerText = "Unmark";
 }
-function deleteTask(event){ // deletes a row
-    const row = event.target.parentElement
-    row.remove()
+function deleteButton(event){
+    const deleteRow = event.target.parentElement;
+    deleteRow.remove();
+
+    const label = event.target.parentElement.querySelector('.child').innerText;
+    for(let i = 0; i < memory.length; i++){
+        if(memory[i] === label){
+            console.log(memory[i]);
+            memory.splice(i, 1);
+        }
+    }
+    for(let i = 0; i < finished.length; i++){
+        if(finished[i].includes(label)){
+            console.log(finished[i]);
+            console.log(i)
+            finished.splice(i, 1);
+        }
+    }
+    localStorage.setItem('memory', JSON.stringify(memory))
+    localStorage.setItem('finished', JSON.stringify(finished))
+    console.log(localStorage)
 }
+function runExistingTasks(){
+    // for(let i = 0; i < finished.length; i++){
+    //     if(finished[i].includes('y')){
+    //         console.log(memory[i])
+    //     }
+    // }
+
+    for(let i = 0; i < memory.length; i++){
+        const newRowDiv = document.createElement("div");
+        const newRowLabel = document.createElement("label");
+        const newRowFinishButton = document.createElement("button");
+        const newRowDeleteButton = document.createElement("button");
+
+        container.appendChild(newRowDiv);
+        newRowDiv.appendChild(newRowLabel);
+        newRowDiv.appendChild(newRowFinishButton);
+        newRowDiv.appendChild(newRowDeleteButton);
+
+        newRowDiv.classList.add("row");
+        newRowLabel.classList.add("child");
+        newRowFinishButton.classList.add("rowButtonFinished", "rowButton");
+        newRowDeleteButton.classList.add("rowButtonDelete", "rowButton");
+
+        newRowLabel.innerText = memory[i];
+        newRowFinishButton.textContent = 'Finish';
+        newRowDeleteButton.textContent = 'Delete';
+
+        newRowFinishButton.id = "finishButton";
+        newRowFinishButton.addEventListener("click", finishButton);
+        newRowDeleteButton.addEventListener("click", deleteButton);
+
+        if (finished[i].includes('y')) {
+            newRowLabel.classList.add("finished");
+            newRowFinishButton.innerText = "Unmark";
+        }
+    }
+}
+

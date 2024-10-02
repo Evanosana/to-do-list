@@ -15,7 +15,6 @@ h1{
     display: flex;
     justify-content: center;
     align-items: center;
-    /* border: 2px solid red */
 }
 #addNewText{
     width: 55%;
@@ -48,17 +47,16 @@ h1{
     flex-direction: column;
     margin: 1rem 0 0 0;
     padding: 0;
-    /* border: 4px solid red; */
 }
 .row{
-    width: 95%;
+    width: 90%;
     height: 3rem;
     display: flex;
-    justify-content: center;
+    justify-content: end;
     align-items: center;
     background-color: #F7F7F7;
     border: 1px solid #E5E5E5;
-    margin-inline: 2.5%;
+    margin-inline: 5%;
     margin-block: 0.15rem;
 }
 .rowButtonFinished{
@@ -74,6 +72,7 @@ h1{
     width: 4rem;
     height: 2.25rem;
     margin-inline: 0.15rem;
+    margin-right: 1rem;
     background-color: #F34436;
     border: none;
     color: white;
@@ -88,7 +87,7 @@ h1{
     align-items: center;
     height: 100%;
     width: 70%;
-    /* border: 4px solid green; */
+    font-size: 1.15rem;
 }
 .finished{
     text-decoration: line-through;
